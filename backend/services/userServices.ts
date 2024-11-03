@@ -22,13 +22,13 @@ export const createUser = async (name: string, email: string,  password: string)
 };
 
 // Récupération d'un utilisateur par ID 
-export async function getUserById(id: string) {
+export async function getUserById(id: number) {
     return await prisma.user.findUnique({ where: { id } });
   }
 
 
   // Mettre à jour un utilisateur
-export async function updateUser(id: string, data: Partial<{ name: string; email: string; password: string }>) {
+export async function updateUser(id: number, data: Partial<{ name: string; email: string; password: string }>) {
     return await prisma.user.update({
       where: { id },
       data,
@@ -36,7 +36,7 @@ export async function updateUser(id: string, data: Partial<{ name: string; email
   }
   
   // Supprimer un utilisateur
-  export async function deleteUser(id: string) {
+  export async function deleteUser(id: number) {
     return await prisma.user.delete({ where: { id } });
   }
   

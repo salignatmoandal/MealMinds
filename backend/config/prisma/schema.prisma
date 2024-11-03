@@ -1,7 +1,7 @@
 // prisma/schema.prisma
 
 datasource db {
-  provider = "postgresql" // ou "mysql", "sqlite", selon votre choix
+  provider = "postgresql" // or "mysql", "sqlite", depending on your choice
   url      = env("DATABASE_URL")
 }
 
@@ -9,29 +9,42 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// User model
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  recipes   Recipe[]
+  id        String   @id @default(uuid())
+  name     String
+  email    String   @unique
+  password String
+  recipes  Recipe[] // One-to-many relationship with recipes
 }
 
+// Recipe model
 model Recipe {
-  id           Int       @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   title        String
   instructions String
-  ingredients  Ingredient[]
-  userId       Int
-  user         User      @relation(fields: [userId], references: [id])
-
-  Ingredient Ingredient[] @relation("RecipeIngredients")
+  ingredients  RecipeIngredient[] // Linking table for many-to-many relationship with additional fields
+  userId       Int // ID of the user who created the recipe
+  user         User               @relation(fields: [userId], references: [id]) // Relation to user
 }
 
+// Ingredient model
 model Ingredient {
-  id       Int      @id @default(autoincrement())
+  id       Int                @id @default(autoincrement())
   name     String
-  recipes  Recipe[] @relation("RecipeIngredients")
+  quantity Float
+  unit     Float
+  recipes  RecipeIngredient[] // Linking table for many-to-many relationship
+}
 
-  Recipe Recipe[]
+// Linking table for Recipe and Ingredient with additional fields
+model RecipeIngredient {
+  id           Int    @id @default(autoincrement())
+  recipeId     Int
+  ingredientId Int
+  quantity     Float // Quantity of the ingredient
+  unit         Float // Unit of measurement (e.g., grams, cups, etc.)
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
