@@ -1,0 +1,37 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql" // ou "mysql", "sqlite", selon votre choix
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  recipes   Recipe[]
+}
+
+model Recipe {
+  id           Int       @id @default(autoincrement())
+  title        String
+  instructions String
+  ingredients  Ingredient[]
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+
+  Ingredient Ingredient[] @relation("RecipeIngredients")
+}
+
+model Ingredient {
+  id       Int      @id @default(autoincrement())
+  name     String
+  recipes  Recipe[] @relation("RecipeIngredients")
+
+  Recipe Recipe[]
+}
